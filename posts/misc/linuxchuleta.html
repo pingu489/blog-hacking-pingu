@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chuleta de Comandos Linux</title>
+<style>
+  :root {
+    --bg-color:#1e1e1e;       /* Color de fondo */
+    --text-color:  #00ff00;    /* Color del texto */
+    --comment-color:   #ffffff;/* Color de los comentarios */
+    --command-color: ;  /* Color de los comandos */
+    --highlight-color: ; /* Color de elementos destacados (como rutas o flags) */
+    --code-font: monospace;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--code-font);
+    padding: 1rem;
+    white-space: pre-wrap;
+    font-size: 20px;
+  }
+
+  .comment {
+    color: var(--comment-color);
+  }
+
+  .command {
+    color: var(--command-color);
+  }
+
+  .highlight {
+    color: var(--highlight-color);
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1 style="text-align: center;">Chuleta de Comandos Linux</h1>
+
+<span class="comment"># COMANDOS DE ARCHIVOS</span><br>
+<span class="command">ls</span> <span class="comment"># Listar directorios</span><br>
+<span class="command">ls -l</span> <span class="comment"># Listado detallado</span><br>
+<span class="command">ls -a</span> <span class="comment"># Listar todos los archivos incluyendo ocultos</span><br>
+<span class="command">cd <span class="highlight">/ruta/a/directorio</span></span> <span class="comment"># Cambiar de directorio</span><br>
+<span class="command">pwd</span> <span class="comment"># Mostrar el directorio actual</span><br>
+<span class="command">mkdir nombre_directorio</span> <span class="comment"># Crear un nuevo directorio</span><br>
+<span class="command">rmdir nombre_directorio</span> <span class="comment"># Eliminar un directorio vacío</span><br>
+<span class="command">rm nombre_archivo</span> <span class="comment"># Eliminar un archivo</span><br>
+<span class="command">rm -r nombre_directorio</span> <span class="comment"># Eliminar un directorio y su contenido recursivamente</span><br>
+<span class="command">touch nombre_archivo</span> <span class="comment"># Crear o actualizar un archivo</span><br>
+<span class="command">cat nombre_archivo</span> <span class="comment"># Mostrar el contenido de un archivo</span><br>
+<span class="command">more nombre_archivo</span> <span class="comment"># Ver contenido del archivo página a página</span><br>
+<span class="command">less nombre_archivo</span> <span class="comment"># Mejor visualización del contenido que 'more'</span><br>
+<span class="command">cp archivo_origen archivo_destino</span> <span class="comment"># Copiar archivos de origen a destino</span><br>
+<span class="command">mv nombre_antiguo nombre_nuevo</span> <span class="comment"># Renombrar o mover un archivo/directorio</span><br>
+<span class="command">ln -s archivo_destino nombre_link</span> <span class="comment"># Crear un enlace simbólico</span><br><br>
+
+<span class="comment"># SSH (Secure Shell)</span><br>
+<span class="command">ssh usuario@host</span> <span class="comment"># Conectar al host como usuario</span><br>
+<span class="command">ssh -p puerto usuario@host</span> <span class="comment"># Conectar usando un puerto específico</span><br>
+<span class="command">ssh-keygen -t rsa</span> <span class="comment"># Generar clave RSA</span><br>
+<span class="command">ssh-copy-id usuario@host</span> <span class="comment"># Copiar tu clave al servidor remoto para login sin contraseña</span><br>
+<span class="command">scp archivo usuario@host:ruta</span> <span class="comment"># Copiar archivo al host remoto</span><br>
+<span class="command">scp usuario@host:/ruta/archivo <span class="highlight">/ruta/local</span></span> <span class="comment"># Copiar archivo desde host remoto</span><br><br>
+
+<span class="comment"># BÚSQUEDA</span><br>
+<span class="command">grep patrón archivos</span> <span class="comment"># Buscar patrón en archivos</span><br>
+<span class="command">grep -r patrón directorio</span> <span class="comment"># Buscar recursivamente en directorio</span><br>
+<span class="command">find /directorio -name nombre*</span> <span class="comment"># Buscar archivos que empiezan con nombre en directorio</span><br>
+<span class="command">find /directorio -type f -name "*.txt"</span> <span class="comment"># Buscar archivos con extensión específica</span><br>
+<span class="command">locate nombre_archivo</span> <span class="comment"># Buscar archivo por nombre usando base de datos</span><br>
+<span class="command">updatedb</span> <span class="comment"># Actualizar base de datos usada por locate</span><br><br>
+
+<span class="comment"># GESTIÓN DE PROCESOS</span><br>
+<span class="command">ps</span> <span class="comment"># Mostrar procesos activos</span><br>
+<span class="command">ps aux | grep nombre_proceso</span> <span class="comment"># Buscar proceso por nombre</span><br>
+<span class="command">top</span> <span class="comment"># Mostrar todos los procesos en ejecución</span><br>
+<span class="command">htop</span> <span class="comment"># Visor interactivo de procesos (requiere instalación)</span><br>
+<span class="command">kill pid</span> <span class="comment"># Matar proceso con pid dado</span><br>
+<span class="command">killall nombre_proceso</span> <span class="comment"># Matar todos los procesos con ese nombre</span><br>
+<span class="command">pkill nombre_proceso</span> <span class="comment"># Matar procesos por nombre</span><br>
+<span class="command">bg</span> <span class="comment"># Listar trabajos en segundo plano; reanudar trabajo parado en background</span><br>
+<span class="command">fg</span> <span class="comment"># Traer el trabajo más reciente al primer plano</span><br>
+<span class="command">jobs</span> <span class="comment"># Listar trabajos activos</span><br>
+<span class="command">nice -n prioridad comando</span> <span class="comment"># Ejecutar comando con prioridad específica</span><br>
+<span class="command">renice prioridad -p pid</span> <span class="comment"># Cambiar prioridad de un proceso en ejecución</span><br><br>
+
+<span class="comment"># PERMISOS DE ARCHIVOS</span><br>
+<span class="command">chmod +x nombre_archivo</span> <span class="comment"># Hacer archivo ejecutable</span><br>
+<span class="command">chmod 755 nombre_archivo</span> <span class="comment"># Permitir lectura y ejecución al dueño y lectura a otros</span><br>
+<span class="command">chown usuario:grupo nombre_archivo</span> <span class="comment"># Cambiar dueño y grupo de un archivo</span><br>
+<span class="command">chgrp grupo nombre_archivo</span> <span class="comment"># Cambiar grupo propietario de un archivo</span><br>
+<span class="command">umask</span> <span class="comment"># Mostrar o establecer permisos por defecto para nuevos archivos</span><br>
+
+</body>
+</html>

