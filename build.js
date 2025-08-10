@@ -1,4 +1,3 @@
-
 const fs = require('fs');
 const path = require('path');
 const marked = require('marked');
@@ -8,6 +7,13 @@ const postsData = {};
 
 categories.forEach(category => {
     const folderPath = path.join(__dirname, 'posts', category);
+
+    if (!fs.existsSync(folderPath)) {
+        console.warn(`⚠️ Carpeta no encontrada: ${folderPath}. Se salta esta categoría.`);
+        postsData[category] = [];
+        return;
+    }
+
     const files = fs.readdirSync(folderPath);
 
     postsData[category] = files.map(file => {
@@ -17,7 +23,6 @@ categories.forEach(category => {
 
         const slug = file.replace('.md', '');
         const htmlFilePath = path.join(__dirname, `${slug}.html`);
-
 
         fs.writeFileSync(htmlFilePath, `
             <!DOCTYPE html>
@@ -46,5 +51,6 @@ categories.forEach(category => {
 });
 
 fs.writeFileSync(path.join(__dirname, 'posts.json'), JSON.stringify(postsData, null, 2));
-console.log("✅ Posts.json generado con éxito");
+console.log("✅ posts.json generado con éxito");
+
 
