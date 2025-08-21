@@ -97,7 +97,7 @@ Nos pedira la contraseña al introducir el comando, ya que el archivo hosts nece
 [sudo] contraseña para pingu: 
 10.10.11.242 devvortex.htb
 </code></pre><p>Y AHORA SI!<br>
-<img src="/devvortex/paginadevvortex.jpg" alt="Branching"></p>
+<img src="../../devvortex/paginadevvortex.jpg" alt="Branching"></p>
 <p>Ahora utilizaremos la herramienta gobuster para descubrir los directorios de la pagina web y efectivamente tenemos tres : Images,css y js.</p>
 <p>Para utilizarla necesitamos indicarle en el comando que diccionario utilizar, yo los tengo en el directorio : /home/pingu/Escritorio/Diccionarios pero suelen estar en : /usr/share/wordlists</p>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>$ gobuster dir -u http://devvortex.htb/ -w /home/pingu/Escritorio/Diccionarios/directory-list-lowercase-2.3-medium.txt 
@@ -144,9 +144,9 @@ Found: dev.devvortex.htb
 </code></pre><p>Volveremos a usar la herramienta gobuster con esta nueva direccion haber que encontramos, usando de nuevo el mismo diccionario.</p>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>gobuster dir -u dev.devvortex.htb -w /home/pingu/Escritorio/Diccionarios/common.txt
 </code></pre><p>Si entramos en la nueva direccion que nos ha dado gobuster veremos la otra web y en el directorio /robots.txt veremos otros directorios donde nos podemos meter.<br>
-<img src="../../public/devvortex/robots.JPG" alt="Branching"></p>
+<img src="..../../devvortex/robots.JPG" alt="Branching"></p>
 <p>LA que nos interesa es "administrador" asi que lo ponemos en nuestra barra de navegador quedando asi : <a href="http://dev.devvortex.htb/administrator/">http://dev.devvortex.htb/administrator/</a> y veremos un subdominio para loguear con una cuenta<br>
-<img src="../../public/devvortex/administrador.jpg" alt="Branching"></p>
+<img src="../../devvortex/administrador.jpg" alt="Branching"></p>
 <p>Si no fijamos esta hecha en la plataforma Joomla, haciendo una busqueda por internet podemos encontrar una vulnerabilidad en joombla</p>
 <p><a href="https://vulncheck.com/blog/joomla-for-rce">https://vulncheck.com/blog/joomla-for-rce</a></p>
 <p>Utilizando el comando siguiente podremos enonctrar un usuario y una contraseña</p>
