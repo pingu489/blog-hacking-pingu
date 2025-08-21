@@ -1,0 +1,135 @@
+<!DOCTYPE html><html>
+      
+<head>
+
+      <style>
+body {
+  background-color: #121212; 
+  color: #f5f5f5;
+  font-family: monospace; 
+  line-height: 1.6;
+  padding: 20px;
+  font-size: 15px;
+}
+
+a {
+  color: #66ffcc;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2, h3 {
+  color: #ffffff;
+}
+
+pre {
+  background-color: #1e1e1e;
+  color: #00ff00; 
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+code {
+  background-color: #1e1e1e;
+  color: #00ff00; 
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+img {
+  max-width: 900px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+}
+
+</style>
+
+
+
+
+      
+      
+      <title>Lo-Fi</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///c:\Users\Oscar\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.8.18\crossnote\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+     
+
+</script></head><body for="html-export">
+    
+    
+      <div class="crossnote markdown-preview  ">
+      
+<hr>
+<p>TryHackMe</p>
+<p>Maquina: Lo-Fi</p>
+<p>Objetivo: Vulnerar la maquina y conseguir ser root ( Privilegios de administrador) utilizando LFI (Local File Inclusion)</p>
+<p>Dificultad: Facil</p>
+<hr>
+<h2 id="escaneo">Escaneo </h2>
+<p>Fase 1: Escaneo de puertos</p>
+<p>Con nmap haremos un escaneo con la ip que nos proporciona htb para ver que puertos tiene abiertos y esta utilizando la maquina.</p>
+
+    <p><img src="../../lofi/1nmap.jpg" alt="Branching"></p>
+
+
+
+<p>Esta utilizando el puerto 80 asi que tiene una pagina web funcionando.</p>
+<p><img src="../../lofi/web.JPG" alt="Branching"></p>
+<p>Es una pagina con un video de musica relajante para estudiar con un menu a la derecha. </p>
+<p>Si nos fijamos cada vez que clicamos en una opcion de ese menu por ejemplo "Sleep, Relax, Chill etc..." en la barra de navegacion de arriba del navegador web cambiara.</p>
+
+<pre data-role="codeBlock" data-info="" class="language-text"><code>La direccion sera : 10.10.23.224/?page=sleep.php
+
+
+<pre data-role="codeBlock" data-info="" class="language-text"><code>
+10.10.23.224/?page=sleep.php
+10.10.23.224/?page=relax.php
+10.10.23.224/?page=Chill.php
+
+</code></pre>
+
+</pre></code></p>
+
+<p>Son algunos ejemplos.....</p>
+
+<p>Cuando cambiamos el valor de ?page= en la barra de navegación, el servidor intenta mostrar el archivo que le pedimos. Al usar ../ en la URL, le indicamos que vaya a carpetas anteriores dentro del sistema de archivos. Así conseguimos acceder a ficheros fuera de la web, que la paginano deberia mostrar por seguridad como el flag.txt</p>
+
+<p>Entonces es tan sencillo como poner:</p>
+
+<pre data-role="codeBlock" data-info="" class="language-text"><code>
+10.10.23.224/?page=../../..flag.txt
+
+</code></pre>
+
+<p>Y... Tenemos la bandera! bastante facil!</p>
+
+<img src="../../lofi/flag.jpg" alt="flag">
+
+<p>Los ../ en la URL significan “volver atrás una carpeta” en el sistema de archivos, igual que cd .. en la terminal. Repitiéndolos varias veces podemos retroceder hasta llegar a la raíz / y desde ahí abrir archivos como flag.txt</p>
+
+
+
+
+</code></pre><p>Conclusion: Una maquina bastante sencilla y rapida que si sabes como funciona LFI lo sacas bastante rapido. </p>
+</p>
+
+      </div>
+
+  
+      </body>
+    
+   
+    
+</html>
