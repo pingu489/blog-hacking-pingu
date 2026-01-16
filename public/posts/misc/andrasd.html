@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="Oscar" content="width=device-width, initial-scale=1.0">
+    <title>Blog de Pingu</title>
+    <link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+    <header>
+        <h1>Blog de Pingu sobre Hacking y Ciberseguridad</h1>
+        <nav>
+            <a href="../../../writeups.html">Writeups</a>
+            <a href="../../../misc.html">Cosas</a>
+            <a href="../../../index.html">Inicio</a>
+        </nav>
+    </header>
+
+    <img src="../../../img/andrasd.png" alt="Logo Andrasd" class="img-derecha">
+   <main id="post-list" data-category="misc">
+
+
+    <a href="https://github.com/pingu489/demon-andrasd">Demonio Andrasd</a>
+    <h2>👹 Andrasd - Demonio de Integridad de Archivos Críticos</h2>
+
+<p>🚀 <strong>Andrasd</strong> es un demonio diseñado para vigilar archivos críticos de sistemas Linux y detectar cambios no autorizados. Su objetivo es proteger la integridad de archivos esenciales y alertarte si alguien intenta modificarlos.</p>
+
+<h3>💻 Qué archivos vigila</h3>
+<p>Actualmente monitoriza:</p>
+<ul>
+  <li><strong>/etc/passwd</strong> 🧑‍💻 - Información de usuarios del sistema</li>
+  <li><strong>/etc/shadow</strong> 🔒 - Hashes de contraseñas</li>
+  <li><strong>/etc/sudoers</strong> ⚡ - Permisos de usuarios con privilegios</li>
+</ul>
+
+<h3>⚙️ Cómo funciona</h3>
+<p>1. Calcula un <strong>hash SHA256</strong> de cada archivo crítico y lo guarda en un archivo seguro.</p>
+<p>2. Compara periódicamente los hashes para detectar cambios.</p>
+<p>3. Genera alertas en un log si se detecta algún cambio, manteniendo un registro completo.</p>
+
+<h3>🛡️ Beneficios</h3>
+<p>Es un mini <strong>Tripwire casero</strong>, ideal para aprender sobre ciberseguridad y mantener tus sistemas protegidos de modificaciones no autorizadas. Puede ampliarse para enviar alertas por Telegram o email, o convertirse en un servicio systemd para funcionar como un demonio completo.</p>
+
+        <h1 style="text-align: center;">📘 Manual de uso – andrasd</h1>
+
+      
+
+<h2>1. Instalación</h2>
+<p class="comment">Copiar el demonio a <code>/usr/local/bin</code>, dar permisos y verificar:</p>
+<pre><code class="comment">sudo cp andrasd.sh /usr/local/bin/andrasd
+sudo chmod 755 /usr/local/bin/andrasd
+andrasd --help   # Opcional para probar</code></pre>
+
+<h2>2. Invocar a andrasd</h2>
+<p class="comment">Iniciar el demonio en segundo plano con privilegios de administrador:</p>
+<pre><code class="comment">sudo andrasd &</code></pre>
+
+<h2>3. Verificación</h2>
+<p class="comment">Comprobar que el demonio está activo en el sistema:</p>
+<pre><code class="comment">ps aux | grep andrasd
+htop           # También puedes usar htop para verlo</code></pre>
+
+<h2>4. Monitorización</h2>
+<p class="comment">Revisar las alertas generadas por cambios en archivos críticos:</p>
+<pre><code class="comment">sudo tail -f /var/log/andrasd.log</code></pre>
+
+<h2>5. Detener</h2>
+<p class="comment">Detener el demonio de forma manual si es necesario:</p>
+<pre><code class="comment">sudo pkill andrasd</code></pre>
+
+    <footer>
+        <p>© 2025 Pingu</p>
+    </footer>
+</body>
+</html>
