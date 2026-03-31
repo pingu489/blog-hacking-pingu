@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOMBRE_MAQUINA | PinguHacking</title>
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #f5f5f5;
+            font-family: monospace;
+            line-height: 1.6;
+            padding: 20px;
+            font-size: 15px;
+        }
+
+        a {
+            color: #66ffcc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1, h2, h3 {
+            color: #ffffff;
+        }
+
+        pre {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        code {
+            background-color: #1e1e1e;
+            color: #00ff00;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        img {
+            max-width: 900px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 20px auto;
+        }
+
+        hr {
+            border: 1px solid #2a2a2a;
+        }
+
+        .meta {
+            color: #cccccc;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+
+    <hr>
+
+    <h1>Brooklyn99
+    </h1>
+
+    <div class="meta">
+        <p>Plataforma: Try hack me</p>
+        <p>Dificultad: Facil </p>
+        <p>Objetivo: Obtener acceso inicial y escalar privilegios hasta root</p>
+        <p>Fecha: 31/03/2026 </p>
+    </div>
+
+    <hr>
+
+    <h2>1️⃣ Escaneo</h2>
+
+    <p>Empezamos haciendo un escaneo con nmap para ver que puertos esta usando y ver por donde podemos empezar a investigar.</p>
+
+    <pre><code>
+nmap -sV 10.128.141.120
+    </code></pre>
+
+    <p>Tiene abiertos los puertos 21,22 y 80. eso quiere decir que tiene abiertos los servicios ftp, ssh y http. .</p>
+
+    <img src="../../Brooklyn99/nmap.jpg" alt="nmap">
+
+    <hr>
+
+    <h2>2️⃣ Explorando la pagina de la maquina</h2>
+
+    <p>Al introducir la dirección IP en el navegador, vemos que nos muestra una página con una foto de la serie brookln 99.</p>
+
+    <img src="../../Brooklyn99/web.JPG" alt="web">
+    
+
+    <hr>
+
+    <h2>3️⃣ Escalada de Privilegios</h2>
+
+    <p>Como a simple vista no vemos nada en la pagina, podemos inspeccionar el codigo a ver si vemos alguna pista y hay algo curioso.</p>
+
+    <img src="../../Brooklyn99/inspeccionar.JPG" alt="web">
+
+    <p> "Have you ever heard of steganography?". nos menciona la estenografia que es la técnica de ocultar mensajes o información confidencial dentro de otro archivo digital (como imágenes, audios o vídeos)</p>
+    <p>Asi que con el comando wget nos descargaremos la imagen y con stegseek buscaremos que hay oculto </p>
+
+    <pre>wget http://10.10.255.194/brooklyn99.jpg<code> 
+        </code></pre>
+
+        <p>Hay que usar el diccionario para poder descifrar el mensaje oculto, en mi caso utilizo rockrou y seleciono donde lo tengo, en mi caso en el escritorio en una carpeta con los demas.</p>
+    <img src="../../Brooklyn99/4steg.JPG" alt="foto">
+
+    <p>y... BINGO! Sacamos la primera contraseña que estaba oculta dentro de la primera imagen.</p>
+    <img src="../../Brooklyn99/5contraseña.JPG" alt="passssh">
+
+    <p>Ahora con estas credenciales podemos intentar acceder al sistema mediante SSH.</p>
+
+    <img src="../../Brooklyn99/flag1.jpg" alt="ssh">
+
+    <p>Y ahi tenemos la primera bandera! ahora nos falta ser Root para completar la maquina.</p>
+
+    <hr>
+
+    <h2>🏁 Root</h2>
+
+    <p>Ahora toca escalar privilegios para obtener acceso como root.</p>
+    <p>Despues de inspeccionar un poco todo lo que tenemos a nuestra mano podemos probar con el servicio FTP que antes hemos visto que estaba abierto.</p>
+    <p>Con FPT podemos comprobar si tiene activado el modo "anonimo" para conectarnos tal cual sin contraseña.</p>
+  
+    <pre><code>
+        ftp anonymous@10.10.255.194
+    </code></pre>
+    <p> Y una vez dentro haciendo "ls" para listar los archivos vemos que hay uno llamado "note_to_jake.txt" lo descargamos con "get"
+        y una vez descargado le hacemos cat para leerlo.</p>
+
+        <img src="../../Brooklyn99/notejake.JPG" alt="jake">
+    <hr>
+
+    <p>Ahora viene una parte que a mi me gusta mucho... un ataque con hydra a la direccion ip de la maquina indicando el usuario jake </p>
+    
+    <p>yo tengo el diccionario en otro lado. pero normalmente en kali linux esta en la misma direccion que en el comando que indica abajo</p>
+    <pre><code>
+        hydra -l jake-P /usr/share/wordlists/rockyou.txt ssh://10.10.255.194 -t 5
+    </code></pre>
+
+    <img src="../../Brooklyn99/passroot.JPG" alt="hydra">
+
+    <p>Con este ataque de fuerza bruta hemos obtenido la contraseña de jake asi que nos podemos conectar por ssh y usando esa contraseña estamos dentro</p>
+
+     <pre><code>
+        ssh jake@10.10.255.194
+    </code></pre>
+
+    <p>Ahora estando dentro hacemos "whoami" y vemos que estamos con el usuario jake, luego podemos hacer sudo -l y nos dira que el usuario puede ejecutar el binario less con privilegios de administrador </p>
+
+    <a href="https://gtfobins.org/gtfobins/less/#sudo" target="_blank">https://gtfobins.org/gtfobins/less/#sudo</a>
+
+
+    <pre><code>
+        sudo less /etc/profile
+    </code></pre>
+
+    <p>>Luego escribimos "!/bin/sh" para abrir la shell con los permisos.Ahora veremos que  el símbolo cambia de $ a #, lo que indica que hemos escalado nuestros privilegios a root. Luego nos movemos a /root y encontramos nuestra última bandera.</p>
+
+    <img src="../../Brooklyn99/flagroot.JPG" alt="flagroot">
+
+
+
+
+    <h2>Conclusión</h2>
+
+    <p>
+        Una maquina bastante facil pero creo que ha sido divertida de hacer por utilizar la estenografia con la imagen y conseguir la primera contraseña.
+    </p>
+
+    <div class="footer">
+        <p>© 2025 PinguHacking | Writeup educativo</p>
+    </div>
+
+</body>
+</html>
